@@ -1,0 +1,358 @@
+/*
+	CHARSET
+ */
+@charset 'UTF-8';
+/*
+	FONTS
+ */
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400,600&subset=latin,latin-ext);
+/*
+	Eric Meyer's Reset CSS v2.0 - http://cssreset.com
+ */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+/*
+	Custom font-face
+ */
+@font-face {
+	font-family: 'cvManager';
+	src: url('../font/cvManager.eot?94905295');
+	src: url('../font/cvManager.eot?94905295#iefix') format('embedded-opentype'),
+			 url('../font/cvManager.woff?94905295') format('woff'),
+			 url('../font/cvManager.ttf?94905295') format('truetype'),
+			 url('../font/cvManager.svg?94905295#cvManager') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+
+	font-family: "cvManager";
+	font-style: normal;
+	font-weight: normal;
+	speak: none;
+
+	display: inline-block;
+	text-decoration: inherit;
+	width: 1em;
+	text-align: center;
+
+	font-variant: normal;
+	text-transform: none;
+
+}
+
+.icon-add:before { content: '\e800'; }
+.icon-remove:before { content: '\e801'; }
+.icon-world:before { content: '\e802'; }
+
+::-webkit-input-placeholder {
+	transition: 				color .3s ease;
+}
+
+/*
+	GENERAL
+ */
+* {
+	outline:					none;
+	-webkit-box-sizing:			border-box;
+	   -moz-box-sizing:			border-box;
+			box-sizing:			border-box;
+}
+/*
+	CONTENT
+ */
+html {
+	min-height:					100%;
+}
+body {
+	font-family: 				'Titillium Web', sans-serif;
+	min-height:					100%;
+	background: 				#F5F5F5;
+	color: 						#666;
+}
+/* button style */
+button {
+	font-family: 				'Titillium Web', sans-serif;
+	border-radius: 				inherit;
+	border: 					inherit;
+	margin-top: 				20px;
+	padding: 					5px 15px;
+	cursor: 					pointer;
+	text-transform:  			uppercase;
+	font-weight:  				bold;
+	transition: 				.2s all;
+	width: 						100%;
+	font-size: 					18px;
+	text-align: 				left;
+	background: 				#C8DF98;
+	color: 						#333;
+}
+button > i {
+	font-size: 					130%;
+	vertical-align:  		  	-2px;
+	margin-right: 				5px;
+}
+button:hover {
+	background: 				#333;
+	color: 						#C8DF98;
+}
+button:active {
+	background: 				#222;
+}
+button.loading {
+	pointer-events: 			none;
+	background: 				#BBB;
+}
+/* input style */
+
+input {
+	font-family: 				'Titillium Web', sans-serif;
+	height:						27px !important;
+}
+input[type="month"] {
+	padding:					0 !important;
+	padding-left:				6px !important;
+}
+
+/* state stylings */
+.success {
+	color: 						#9FCB32
+}
+.error {
+	color: 						#FF5757
+}
+/* main wrapper */
+#wrapper {
+	width: 						80%;
+	max-width: 					1280px;
+	height: 					100%;
+	margin: 					0 auto;
+	padding: 					50px;
+	display: 					flex;
+	flex-direction: 			column;
+	align-items: 				center;
+}
+	#wrapper > div {
+		width: 						100%;
+		border-radius: 				5px;
+	}
+
+	/* create - view section */
+	#wrapper > #manage {
+		display: 					flex;
+		margin-bottom: 				50px;
+	}
+
+		#manage > section {
+			padding: 					20px;
+			border-radius: 				inherit;
+			position:  					relative;
+			box-shadow: 				0 0 3px currentColor;
+			transition: 				opacity .3s ease;
+			width: 						50%;
+			opacity:  					1;
+		}
+		#manage > section:before,
+		#cvsList:before {
+			content: 					attr( data-title );
+			position:  					absolute;
+			border-radius: 				inherit;
+			margin-left: 				-90px;
+			left: 						50%;
+			top: 						-11px;
+			border: 					1px solid rgba(0, 0, 0, 0.3);
+			border-width: 				0 1px;
+			text-align: 				center;
+			line-height: 				22px;
+			width: 						180px;
+			color: 						#9FCB32;
+			font-size: 					22px;
+			background: 				#F5F5F5;
+		}
+		#manage > section#viewer {
+			display: 	 				flex;
+			flex-direction: 			column;
+		}
+		#manage > div {
+			width: 						100px;
+		}
+
+		#manage > .preview {
+			opacity:  					.2;
+			pointer-events: 			none;
+		}
+		#manage > .preview input,
+		#manage > .preview input::-webkit-input-placeholder {
+			color: 						#FDFDFD;
+		}
+
+		/* create - view sections */
+		#manage > section > section {
+
+			display: 					flex;
+			flex-direction: 			row;
+			flex-wrap: 					wrap;
+			font-weight: 				bold;
+
+		}
+		#manage > section#viewer > section#info {
+			flex:				 		1;
+			display: 					block;
+			align-items: 				flex-start;
+		}
+		#manage > section > section > div {
+			width: 						50%;
+		}
+
+		#manage > section > section > div > input,
+		#manage > section > section > div > div {
+			font-weight: 				normal;
+		}
+		#manage > section > section > div > input,
+		#manage > section > section > div > div > input {
+			border-radius: 				3px;
+			padding: 					6px;
+			margin: 					10px;
+			color: 						currentColor;
+			border: 					1px solid rgba(0, 0, 0, 0.1);
+			background: 				#FDFDFD;
+		}
+		#manage > section#viewer > section > div > div:after {
+			opacity:  					0;
+			content : 					'/';
+			pointer-events: 			none;
+		}
+
+		/* separate styling */
+
+		#manage > section > section#details > div > div,
+		#manage > section > section#details > div > input {
+			margin: 					10px 0;
+			display: 					block;
+			width: 						85%;
+		}
+
+		/* field groups */
+
+		#manage > section > section > .group {
+			width: 						100%;
+			margin-top: 				10px;
+		}
+
+		#manage > section > section > .group > .title {
+			display: 					inherit !important;
+			font-weight:  				bold;
+			line-height: 				25px;
+			border-bottom: 				1px solid currentColor;
+		}
+
+		/* field add-remove button */
+
+		#manage > section > section > .group i {
+			color: 						#FF5757;
+			cursor: 					pointer;
+			transition: 				all .2s;
+			font-size:	 				22px;
+			opacity:  					0;
+		}
+
+		/* show field controls on group hover */
+		#manage > section > section > .group:hover > div > i {
+			opacity:  					.3;
+		}
+
+		/* changing style for field adding button */
+
+		#manage > section > section > .group > .title > i {
+			color: 						#9FCB32;
+			float: 						right;
+			opacity:  					.6;
+		}
+
+		/* hover on field buttons */
+
+		#manage > section > section > .group > .title > i:hover {
+			color: 						#222;
+		}
+		#manage > section > section > .group i:hover {
+			opacity:  					1 !important;
+		}
+
+		/* adding top margin to first input */
+
+		#manage > section > section > .group.hobbies > div,
+		#manage > section > section > .group.education > div,
+		#manage > section > section > .group.work_experience > div {
+			display: 					flex;
+			align-items: 				center;
+		}
+
+
+	/* CVs list */
+	#wrapper > #cvsList {
+		padding: 					15px;
+		position: 					relative;
+		box-shadow: 				0 0 3px currentColor;
+	}
+		#cvsList > article {
+			display:  					flex;
+			align-items: 				center;
+			justify-content: 			space-between;
+			transition: 				height .2s ease;
+			cursor: 					pointer;
+			border-radius: 				5px;
+			padding: 					15px;
+			height: 					17px;
+		}
+		#cvsList > article.current {
+			color: 						#859B58;
+			font-weight: 		 		bold;
+		}
+		#cvsList > article.error {
+			cursor: 					default;
+		}
+		#cvsList > article > i {
+			color: 						#FF5757;
+			margin-right: 				10px;
+			transition: 				.2s all;
+			align-items: 				center;
+			opacity:  					.2
+		}
+		#cvsList > article:hover > i {
+			opacity:  					1;
+		}
+		#cvsList > article > #name {
+			flex: 						1;
+		}
+		#cvsList > article:first-child() {
+			border-top-left-radius: 	5px;
+			border-top-right-radius:	5px;
+		}
+		#cvsList > article:nth-child(even) {
+			background: 				rgba( 0, 0, 0, .05 );
+		}
+		#cvsList > article:last-child() {
+			border-bottom-left-radius:	5px;
+			border-bottom-right-radius:	5px;
+		}
+
+
+@media screen and ( max-width: 1300px ) {
+	#wrapper {
+		width: 						100%;
+	}
+}
+@media screen and ( max-width: 1050px ) {
+	#wrapper > #manage {
+		flex-direction: 			column;
+		align-items: 				center;
+	}
+	#wrapper > #cvsList,
+	#wrapper > #manage > section {
+		min-width:					420px;
+		width: 						100%
+	}
+	#wrapper > #manage > section#viewer {
+		margin-top: 				100px;
+	}
+}
