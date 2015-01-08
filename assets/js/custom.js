@@ -13,11 +13,7 @@ $(function(){
 		location : null,
 		birthdate : null,
 		fields : {
-			dates : {
-				hobbies : [],
-				education : [],
-				work_experience : []
-			},
+			dates : {},
 			hobbies : [ null, null ],
 			education : [ null, null ],
 			work_experience : [ null, null ]
@@ -38,11 +34,7 @@ $(function(){
 				location : null,
 				birthdate : null,
 				fields : {
-					dates : {
-						hobbies : [],
-						education : [],
-						work_experience : []
-					},
+					dates : {},
 					hobbies : [ null, null ],
 					education : [ null, null ],
 					work_experience : [ null, null ]
