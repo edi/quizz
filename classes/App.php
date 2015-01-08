@@ -32,7 +32,8 @@
 		public static function getCVs( $cvID = false )
 		{
 			// return if id is specified
-			return DB::query( 'SELECT cv.cvID, cv.dateline, p.personName, p.phone, p.location, p.birthdate, p.hobbies, p.institutions, p.companies FROM cvs cv JOIN persons p ON cv.personID = p.personID ORDER BY cvID DESC' )->fetch_assoc();
+			if ( $cvID )
+				return DB::query( 'SELECT cv.cvID, cv.dateline, p.personName, p.phone, p.location, p.birthdate, p.hobbies, p.institutions, p.companies FROM cvs cv JOIN persons p ON cv.personID = p.personID ORDER BY cvID DESC' )->fetch_assoc();
 
 			// list array
 			$list = array();
@@ -146,8 +147,6 @@
 		 */
 		public static function deleteCV ( $data )
 		{
-			// cancel behaviour
-			return true;
 
 			// delete all entries related to the cvID
 			DB::query( "DELETE FROM list WHERE cvID = " . ( int ) $data[ 'cvID' ] . " LIMIT 1" );
@@ -189,7 +188,7 @@
 					// insert institutions
 					foreach ( $data['fields']['education'] as $key => $name )
 					{
-						DB::query("INSERT INTO institutions ( institutionName, period ) VALUES ( '".urlencode( $name )."', '". $data['dates']['education'][ $key ] ."' )");
+						DB::query("INSERT INTO institutions ( institutionName, period ) VALUES ( '".urlencode( $name )."', '". $data['fields']['dates']['education'][ $key ] ."' )");
 						$institutions[] = DB::insertedID();
 					}
 
@@ -197,12 +196,13 @@
 					foreach ( $data['fields']['work_experience'] as $key => $name )
 					{
 
-						$from = strtotime( $date['dates']['work_experience'][ $key ]['from'] );
-						$until = strtotime( $date['dates']['work_experience'][ $key ]['until'] );
+						// strings to timestamps
+						$from = strtotime( $data['fields']['dates']['work_experience'][ $key ]['from'] );
+						$until = strtotime( $data['fields']['dates']['work_experience'][ $key ]['until'] );
 
 						if ( $from && $until )
 						{
-							DB::query("INSERT INTO institutions ( companyName, `from`, until ) VALUES ( '". urldecode( $name )."', '". $from ."', '". $until ."' )");
+							DB::query("INSERT INTO companies ( companyName, `from`, until ) VALUES ( '". urldecode( $name )."', ". $from .", ". $until ." )");
 							$companies[] = DB::insertedID();
 						}
 
@@ -217,9 +217,12 @@
 					// Insert CV entry
 					DB::query( "INSERT INTO cvs ( personID, dateline ) VALUES ( ".$personID.", unix_timestamp() )" );
 
+					// Prepare CV data
+					$cv = self::getCVs( DB::insertedID() );
+
 					// Set state to successful
 					self::$response = array(
-						'data' => self::getCVs( DB::insertedID() ),
+						'data' => self::prepareCV( $cv ),
 						'success' => true
 					);
 
