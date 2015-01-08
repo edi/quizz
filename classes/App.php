@@ -29,8 +29,11 @@
 		 * return all CVs in the DB
 		 * @return [array]
 		 */
-		public static function getCVs()
+		public static function getCVs( $cvID = false )
 		{
+			// return if id is specified
+			return DB::query( 'SELECT cv.cvID, cv.dateline, p.personName, p.phone, p.location, p.birthdate, p.hobbies, p.institutions, p.companies FROM cvs cv JOIN persons p ON cv.personID = p.personID ORDER BY cvID DESC' )->fetch_assoc();
+
 			// list array
 			$list = array();
 
@@ -169,13 +172,21 @@
 			if ( strtotime( $data['birthdate'] ) )
 			{
 				// validate number
-				if ( ctype_digit( $data['phone'] ) )
+				if ( ctype_digit( str_replace(' ', '', $data['phone'] ) ) )
 				{
 
 					// empty lists
 					$institutions = $companies = array();
 
-					// insert instituions
+					// removing empty array elements
+					$data['fields']['hobbies'] = array_filter( $data['fields']['hobbies'] );
+					$data['fields']['education'] = array_filter( $data['fields']['education'] );
+					$data['fields']['work_experience'] = array_filter( $data['fields']['work_experience'] );
+
+					// debugging
+					// print_r( $data );
+
+					// insert institutions
 					foreach ( $data['fields']['education'] as $key => $name )
 					{
 						DB::query("INSERT INTO institutions ( institutionName, period ) VALUES ( '".urlencode( $name )."', '". $data['dates']['education'][ $key ] ."' )");
@@ -198,7 +209,7 @@
 					}
 
 					// inserting person
-					$sql = DB::query( "INSERT INTO persons ( personName, phone, location, birthdate, hobbies, companies, institutions ) VALUES ( '". urlencode( $data['name'] ) ."', '".$data['phone']."', '". urlencode( $data['location'] ) ."', ". strtotime( $data['birthdate'] ) .", '". urlencode( json_encode( array_filter( $data['fields']['hobbies'] ) ) ) ."', '".implode( ',' , $institutions )."', '".implode( ',' , $companies )."' )" );
+					$sql = DB::query( "INSERT INTO persons ( personName, phone, location, birthdate, hobbies, institutions, companies ) VALUES ( '". urlencode( $data['name'] ) ."', '".trim( $data['phone'] )."', '". urlencode( $data['location'] ) ."', ". strtotime( $data['birthdate'] ) .", '". urlencode( json_encode( $data['fields']['hobbies'] ) ) ."', '".implode( ',' , $institutions )."', '".implode( ',' , $companies )."' )" );
 
 					// getting person ID
 					$personID = DB::insertedID();
@@ -206,17 +217,12 @@
 					// Insert CV entry
 					DB::query( "INSERT INTO cvs ( personID, dateline ) VALUES ( ".$personID.", unix_timestamp() )" );
 
-					// Get CV id
-					$cvID = DB::insertedID();
-
-					// give it a rest !
-					sleep( 1 );
-
 					// Set state to successful
 					self::$response = array(
-						'data' => self::prepareCV( $cv ),
+						'data' => self::getCVs( DB::insertedID() ),
 						'success' => true
 					);
+
 				} else
 					self::$response['data'] = 'invalid_phone';
 			} else
