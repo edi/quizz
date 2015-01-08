@@ -123,7 +123,7 @@ $(function(){
 							cvTemplate.fire( 'loadCV' , null, 0 );
 
 						} else
-							alert( app.language[ lang ][ 'unknown_error' ]);
+							alert( app.language[ lang ][ response.data ]);
 
 						/* remove processing state */
 						cvTemplate.set( 'saving' , false );

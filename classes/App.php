@@ -51,6 +51,7 @@
 		public static function prepareCV( $data )
 		{
 
+			$hobbies = json_decode( urldecode( $data[ 'hobbies' ] ) , true );
 			$institutions = self::getFields ( 'institutions' , 'institutionID' , $data['institutions'] );
 			$companies = self::getFields ( 'companies' , 'companyID' , $data['companies'] );
 
@@ -66,28 +67,30 @@
 						'education' => array(),
 						'work_experience' => array()
 					),
-					'hobbies' => json_decode( urldecode( $data[ 'hobbies' ] ) , true ),
+					'hobbies' => ( count( $hobbies ) ) ? $hobbies : array( null, null ) ,
 					'education' => ( count( $institutions ) ) ? array() : array( null, null ),
 					'work_experience' => ( count( $companies ) ) ? array() : array( null, null )
 				),
 				'dateline' => date( 'j M Y, H:i', $data[ 'dateline' ] )
 			);
 
-			foreach ( $institutions as $institution )
-			{
-				$cv[ 'fields' ][ 'dates' ][ 'education' ][] = $institution[ 'period' ];
-				$cv[ 'fields' ][ 'education' ][] = urldecode( $institution[ 'institutionName' ] );
-			}
+			if (count( $institutions ))
+				foreach ( $institutions as $institution )
+				{
+					$cv[ 'fields' ][ 'dates' ][ 'education' ][] = $institution[ 'period' ];
+					$cv[ 'fields' ][ 'education' ][] = urldecode( $institution[ 'institutionName' ] );
+				}
 
-			foreach ( $companies as $company )
-			{
-				$cv[ 'fields' ][ 'dates' ][ 'work_experience' ][] = array(
-					'from' => date( 'M Y', $company[ 'from' ] ),
-					'until' => date( 'M Y', $company[ 'until' ] )
-				);
+			if (count( $companies ))
+				foreach ( $companies as $company )
+				{
+					$cv[ 'fields' ][ 'dates' ][ 'work_experience' ][] = array(
+						'from' => date( 'M Y', $company[ 'from' ] ),
+						'until' => date( 'M Y', $company[ 'until' ] )
+					);
 
-				$cv[ 'fields' ][ 'work_experience' ][] = urldecode( $company[ 'companyName' ] );
-			}
+					$cv[ 'fields' ][ 'work_experience' ][] = urldecode( $company[ 'companyName' ] );
+				}
 
 			return $cv;
 
@@ -135,34 +138,76 @@
 		}
 
 		/**
+		 * Deleting a CV entry from database
+		 * @param  int $id CV ID
+		 */
+		public static function deleteCV ( $data )
+		{
+			// cancel behaviour
+			return true;
+
+			// delete all entries related to the cvID
+			DB::query( "DELETE FROM list WHERE cvID = " . ( int ) $data[ 'cvID' ] . " LIMIT 1" );
+
+			// change state
+			self::$response = array(
+				'data' => ( int ) $data[ 'cvID' ],
+				'success' => true
+			);
+
+			return true;
+		}
+
+		/**
 		 * Validating and inserting CV into DB
 		 * @param  array $data CV data
 		 * @return mixed
 		 */
-		public static function saveCV( $data )
+		public static function saveCV ( $data )
 		{
-
-			// trim whitespaces
-			array_filter( $data , 'trim' );
-
-			// validate dates
-			$birthdate = strtotime( 'DD.MM.YY', $data['birthdate'] );
-			if ( $birthdate )
+			// validate birthdate
+			if ( strtotime( $data['birthdate'] ) )
 			{
 				// validate number
 				if ( ctype_digit( $data['phone'] ) )
 				{
+
+					// empty lists
+					$institutions = $companies = array();
+
+					// insert instituions
+					foreach ( $data['fields']['education'] as $key => $name )
+					{
+						DB::query("INSERT INTO institutions ( institutionName, period ) VALUES ( '".urlencode( $name )."', '". $data['dates']['education'][ $key ] ."' )");
+						$institutions[] = DB::insertedID();
+					}
+
+					// insert companies
+					foreach ( $data['fields']['work_experience'] as $key => $name )
+					{
+
+						$from = strtotime( $date['dates']['work_experience'][ $key ]['from'] );
+						$until = strtotime( $date['dates']['work_experience'][ $key ]['until'] );
+
+						if ( $from && $until )
+						{
+							DB::query("INSERT INTO institutions ( companyName, `from`, until ) VALUES ( '". urldecode( $name )."', '". $from ."', '". $until ."' )");
+							$companies[] = DB::insertedID();
+						}
+
+					}
+
 					// inserting person
-					$sql = DB::query( "INSERT INTO persons ( personName, phone, location, birthdate, hobbies, companies, institutions ) VALUES ( '". urldecode( $data['name'] )."', '".$data['phone']."', '".urldecode( $data['location'] )."', ".." )" );
+					$sql = DB::query( "INSERT INTO persons ( personName, phone, location, birthdate, hobbies, companies, institutions ) VALUES ( '". urlencode( $data['name'] ) ."', '".$data['phone']."', '". urlencode( $data['location'] ) ."', ". strtotime( $data['birthdate'] ) .", '". urlencode( json_encode( array_filter( $data['fields']['hobbies'] ) ) ) ."', '".implode( ',' , $institutions )."', '".implode( ',' , $companies )."' )" );
 
 					// getting person ID
-					$personID = DB::inserted_id();
+					$personID = DB::insertedID();
 
 					// Insert CV entry
 					DB::query( "INSERT INTO cvs ( personID, dateline ) VALUES ( ".$personID.", unix_timestamp() )" );
 
 					// Get CV id
-					$cvID = DB::inserted_id();
+					$cvID = DB::insertedID();
 
 					// give it a rest !
 					sleep( 1 );
@@ -176,27 +221,6 @@
 					self::$response['data'] = 'invalid_phone';
 			} else
 				self::$response['data'] = 'invalid_birthdate';
-		}
-
-		/**
-		 * Deleting a CV entry from database
-		 * @param  int $id CV ID
-		 */
-		public static function deleteCV ( $data )
-		{
-
-			return true;
-
-			// delete all entries related to the cvID
-			DB::query( "DELETE FROM list WHERE cvID = " . ( int ) $data[ 'cvID' ] . " LIMIT 1" );
-
-			// change state
-			self::$response = array(
-				'data' => ( int ) $data[ 'cvID' ],
-				'success' => true
-			);
-
-			return true;
 		}
 
 	}

@@ -17,6 +17,11 @@
 	define( 'action' , $_POST['action'] );
 
 	/**
+	 * Get rid of parent container
+	 */
+	$_POST = $_POST['data'];
+
+	/**
 	 * Autoload classes
 	 */
 	function __autoload( $className )
