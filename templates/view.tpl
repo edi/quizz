@@ -45,14 +45,14 @@
 
 								<!-- education -->
 								{{ # groups[ group ] == 'education' && cv.fields.dates.education[ index ] }}
-									({{{ cv.fields.dates.education[ index ] }}})
+									( {{{ cv.fields.dates.education[ index ] }}} )
 								{{ / education }}
 
 
 								<!-- work_experience -->
 								{{ # groups[ group ] == 'work_experience' && cv.fields.dates.work_experience[ index ].from && cv.fields.dates.work_experience[ index ].until }}
 
-										({{{ cv.fields.dates.work_experience[ index ].from + ' - ' + cv.fields.dates.work_experience[ index ].until }}})
+										( {{{ cv.fields.dates.work_experience[ index ].from + ' - ' + cv.fields.dates.work_experience[ index ].until }}} )
 
 								{{ / work_experience }}
 							</div>
