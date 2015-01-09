@@ -11,7 +11,7 @@
 	{{ > view }}
 
 </div>
-<!-- list with all CV's -->
+<!-- list with all CVs -->
 <div id="cvsList" data-title="{{ lang( current, 'existing_cvs' ) }}">
 	{{ # list:num }}
 		<article on-click="loadCV:{{ num }}" class="{{ cv.cvID == cvID ? 'current' : ''  }}">
