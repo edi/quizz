@@ -148,8 +148,13 @@
 		public static function deleteCV ( $data )
 		{
 
+			// get personID before deleting
+			$person = DB::query( 'SELECT c.personID, p.institutions, p.companies FROM cvs c JOIN persons p ON c.personID = p.personID WHERE cvID = '. (int) $data[ 'cvID'] . ' LIMIT 1' )->fetch_assoc();
+
 			// delete all entries related to the cvID
-			DB::query( "DELETE FROM list WHERE cvID = " . ( int ) $data[ 'cvID' ] . " LIMIT 1" );
+			DB::query( "DELETE cvs, persons FROM cvs JOIN persons USING(personID) WHERE personID = " . $person[ 'personID' ] );
+			DB::query( "DELETE FROM institutions WHERE institutionID IN (" . $person[ 'institutions' ] . ") ");
+			DB::query( "DELETE FROM companies WHERE companyID IN (" . $person[ 'companies' ] . ")");
 
 			// change state
 			self::$response = array(

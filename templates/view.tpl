@@ -41,7 +41,7 @@
 						<!-- field info -->
 						{{ # cv.fields[ groups[ group ]][ index ] }}
 							<div class="field {{ groups[ group ] }}">
-								{{{ . }}}
+								{{ index + 1 }}. {{{ . }}}
 
 								<!-- education -->
 								{{ # groups[ group ] == 'education' && cv.fields.dates.education[ index ] }}

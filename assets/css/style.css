@@ -208,6 +208,9 @@ input[type="month"] {
 		#manage > section > section > div > div {
 			font-weight: 				normal;
 		}
+		#manage > section#viewer > section > div > div {
+			margin: 					10px 0;
+		}
 		#manage > section > section > div > input,
 		#manage > section > section > div > div > input {
 			border-radius: 				3px;
