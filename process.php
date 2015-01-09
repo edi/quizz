@@ -33,7 +33,7 @@
 	 * Checking if method is allowed ( avoid __construct / other undesirable requests)
 	 */
 	if ( in_array( action , App::$allowed_methods ) )
-		$response = call_user_func( array ( $app , action ) , $_POST );
+		call_user_func( array ( $app , action ) , $_POST );
 
 	/**
 	 * Print out formatted JSON ( just for readability )
