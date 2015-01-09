@@ -153,8 +153,8 @@
 
 			// delete all entries related to the cvID
 			DB::query( "DELETE cvs, persons FROM cvs JOIN persons USING(personID) WHERE personID = " . $person[ 'personID' ] );
-			DB::query( "DELETE FROM institutions WHERE institutionID IN (" . $person[ 'institutions' ] . ") ");
-			DB::query( "DELETE FROM companies WHERE companyID IN (" . $person[ 'companies' ] . ")");
+			DB::query( "DELETE FROM institutions WHERE institutionID IN (" . $person[ 'institutions' ] . ")" );
+			DB::query( "DELETE FROM companies WHERE companyID IN (" . $person[ 'companies' ] . ")" );
 
 			// change state
 			self::$response = array(
@@ -162,7 +162,6 @@
 				'success' => true
 			);
 
-			return true;
 		}
 
 		/**
@@ -172,6 +171,9 @@
 		 */
 		public static function saveCV ( $data )
 		{
+			// unwrap container
+			$data = $data['data'];
+
 			// validate birthdate
 			if ( strtotime( $data['birthdate'] ) )
 			{

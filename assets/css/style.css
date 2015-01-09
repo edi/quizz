@@ -208,8 +208,12 @@ input[type="month"] {
 		#manage > section > section > div > div {
 			font-weight: 				normal;
 		}
-		#manage > section#viewer > section > div > div {
-			margin: 					10px 0;
+		#manage > section#viewer > section > div > div.field {
+			margin: 					10px 0 10px 10px;
+		}
+		#manage > section#viewer > section > div > div > b {
+			color: 						#9FCB32;
+			font-weight: 				bold;
 		}
 		#manage > section > section > div > input,
 		#manage > section > section > div > div > input {
@@ -230,7 +234,7 @@ input[type="month"] {
 
 		#manage > section > section#details > div > div,
 		#manage > section > section#details > div > input {
-			margin: 					10px 0;
+			margin: 					10px 0 10px 10px;
 			display: 					block;
 			width: 						85%;
 		}
