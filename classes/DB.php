@@ -12,10 +12,10 @@
 
 				// no connection found, init connection
 				self::$connection = new MySQLi(
-					'localhost',		/* HOST */
-					'root',				/* USER */
-					'dulumanedy17#', 	/* PASS */
-					'cv_manager'		/* DB */
+					'localhost', /* HOST */
+					'root', /* USER */
+					'password', /* PASS */
+					'cv_manager' /* DB */
 				);
 
 		}
