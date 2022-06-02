@@ -17,7 +17,6 @@
 
 	</head>
 	<body>
-		<!-- content wrapper -->
 		<div id="wrapper"></div>
 	</body>
 </html>
